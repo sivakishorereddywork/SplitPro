@@ -1,6 +1,6 @@
 # Split PRO
 
-<!-- A secure, modern expense splitting web application built with Java Spring Boot and vanilla JavaScript. -->
+A secure, modern expense splitting web application built with Java Spring Boot and vanilla JavaScript.
 
 ## Features
 
