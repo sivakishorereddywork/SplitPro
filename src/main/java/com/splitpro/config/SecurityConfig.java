@@ -1,6 +1,7 @@
 package com.splitpro.config;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +33,7 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Value("${splitpro.security.cors.allowed-origins:http://localhost:8080}")
+    @Value("${splitpro.security.cors.allowed-origins:http://localhost:8080,http://localhost:3000,http://localhost:5173}")
     private String[] allowedOrigins;
 
     @Bean
@@ -46,15 +47,17 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authz -> authz
-                // Public endpoints - must be first and most specific
-                .requestMatchers("/api/auth/signup").permitAll()
-                .requestMatchers("/api/auth/login").permitAll() 
-                .requestMatchers("/api/auth/forgot-password").permitAll()
+                // Public endpoints - ORDER MATTERS! Most specific first
+                .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/forgot-password").permitAll()
                 .requestMatchers("/api/support").permitAll()
                 
-                // Static resources
+                // Static resources and root paths
                 .requestMatchers("/", "/index.html", "/favicon.ico").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/assets/**").permitAll()
+                .requestMatchers("/error").permitAll()
+                
+                // Health check endpoints
+                .requestMatchers("/actuator/health").permitAll()
                 
                 // All other API endpoints require authentication
                 .requestMatchers("/api/**").authenticated()
@@ -78,10 +81,18 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins));
-        configuration.setAllowedMethods(Arrays.asList(
-            "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
+        
+        // Allow multiple origins for development
+        configuration.setAllowedOriginPatterns(List.of(
+            "http://localhost:*", 
+            "https://localhost:*",
+            "http://127.0.0.1:*"
         ));
+        
+        configuration.setAllowedMethods(Arrays.asList(
+            "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"
+        ));
+        
         configuration.setAllowedHeaders(Arrays.asList(
             "Authorization", 
             "Content-Type", 
@@ -89,8 +100,15 @@ public class SecurityConfig {
             "Accept",
             "Origin",
             "Cache-Control",
-            "X-CSRF-Token"
+            "X-CSRF-Token",
+            "X-XSRF-TOKEN"
         ));
+        
+        configuration.setExposedHeaders(Arrays.asList(
+            "Authorization",
+            "Content-Disposition"
+        ));
+        
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
         

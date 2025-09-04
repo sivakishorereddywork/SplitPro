@@ -9,6 +9,7 @@
 /Users/sivakishorereddy/Downloads/SplitPRO/src/main/java/com/splitpro/config/SecurityConfig.java
 /Users/sivakishorereddy/Downloads/SplitPRO/src/main/java/com/splitpro/controller/FriendController.java
 /Users/sivakishorereddy/Downloads/SplitPRO/src/main/java/com/splitpro/controller/ExpenseController.java
+/Users/sivakishorereddy/Downloads/SplitPRO/src/main/java/com/splitpro/controller/AuthController.java
 /Users/sivakishorereddy/Downloads/SplitPRO/src/main/java/com/splitpro/controller/SupportController.java
 /Users/sivakishorereddy/Downloads/SplitPRO/src/main/java/com/splitpro/service/GroupService.java
 /Users/sivakishorereddy/Downloads/SplitPRO/src/main/java/com/splitpro/controller/GroupController.java
@@ -29,3 +30,4 @@
 /Users/sivakishorereddy/Downloads/SplitPRO/src/main/java/com/splitpro/model/User.java
 /Users/sivakishorereddy/Downloads/SplitPRO/src/main/java/com/splitpro/model/Settlement.java
 /Users/sivakishorereddy/Downloads/SplitPRO/src/main/java/com/splitpro/model/Friend.java
+/Users/sivakishorereddy/Downloads/SplitPRO/src/main/java/com/splitpro/exception/GlobalExceptionHandler.java

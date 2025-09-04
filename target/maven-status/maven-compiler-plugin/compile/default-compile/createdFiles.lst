@@ -23,6 +23,7 @@ com/splitpro/dto/ExpenseDTOs$AddFriendRequest.class
 com/splitpro/dto/ExpenseDTOs$CreateSettlementRequest.class
 com/splitpro/dto/AuthDTOs$LoginRequest$LoginRequestBuilder.class
 com/splitpro/dto/ExpenseDTOs$SplitResponse$SplitResponseBuilder.class
+com/splitpro/exception/GlobalExceptionHandler.class
 com/splitpro/config/SecurityConfig.class
 com/splitpro/dto/ExpenseDTOs$ExpenseResponse.class
 com/splitpro/model/Expense$SplitType.class
@@ -44,6 +45,7 @@ com/splitpro/dto/ExpenseDTOs$BalanceResponse$BalanceResponseBuilder.class
 com/splitpro/controller/BalanceController.class
 com/splitpro/model/Friend.class
 com/splitpro/dto/AuthDTOs$SignupRequest.class
+com/splitpro/controller/AuthController.class
 com/splitpro/dto/ExpenseDTOs$SplitResponse.class
 com/splitpro/model/Expense$ExpenseSplit$ExpenseSplitBuilder.class
 com/splitpro/model/Group.class

@@ -1,21 +1,32 @@
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://siva:Bujji.ms@123@splitpro.mtspwy5.mongodb.net/
+      uri: mongodb+srv://siva:Bujji.ms@123@splitpro.mtspwy5.mongodb.net/splitpro
   
   security:
     require-ssl: false
+
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
 
 logging:
   level:
     com.splitpro: DEBUG
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
+    org.springframework.data.mongodb: DEBUG
     root: INFO
 
 splitpro:
   security:
     jwt:
-      secret: dev-secret-key-not-for-production
+      # IMPORTANT: Must be at least 32 characters for HS256
+      secret: "+s4lXB+d5Vooa/BQ3FvVT3xnCNok/EJo8EbjohuHDy4="
+      access-token-expiry: 900000  # 15 minutes
+      refresh-token-expiry: 604800000  # 7 days
+      cookie-name: split-pro-token
     cors:
-      allowed-origins: http://localhost:8080,http://localhost:3000
+      allowed-origins: http://localhost:8080,http://localhost:3000,http://localhost:5173,http://127.0.0.1:8080

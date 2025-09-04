@@ -14,9 +14,11 @@ import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class JwtService {
 
@@ -29,29 +31,72 @@ public class JwtService {
     @Value("${splitpro.security.jwt.refresh-token-expiry:604800000}")
     private long refreshTokenExpiry;
 
+    private SecretKey signingKey;
+
+    @PostConstruct
+    public void init() {
+        try {
+            // Ensure the secret is long enough for HS256
+            if (jwtSecret == null || jwtSecret.length() < 32) {
+                throw new IllegalArgumentException("JWT secret must be at least 32 characters long for HS256");
+            }
+            
+            this.signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+            log.info("JWT Service initialized successfully");
+        } catch (Exception e) {
+            log.error("Failed to initialize JWT Service: {}", e.getMessage());
+            throw new RuntimeException("JWT Service initialization failed", e);
+        }
+    }
+
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        return signingKey;
     }
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        try {
+            return extractClaim(token, Claims::getSubject);
+        } catch (Exception e) {
+            log.warn("Failed to extract username from token: {}", e.getMessage());
+            return null;
+        }
     }
 
     public String extractUserId(String token) {
-        return extractClaim(token, claims -> claims.get("userId", String.class));
+        try {
+            return extractClaim(token, claims -> claims.get("userId", String.class));
+        } catch (Exception e) {
+            log.warn("Failed to extract userId from token: {}", e.getMessage());
+            return null;
+        }
     }
 
     public String extractTokenType(String token) {
-        return extractClaim(token, claims -> claims.get("type", String.class));
+        try {
+            return extractClaim(token, claims -> claims.get("type", String.class));
+        } catch (Exception e) {
+            log.warn("Failed to extract token type: {}", e.getMessage());
+            return null;
+        }
     }
 
     public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+        try {
+            return extractClaim(token, Claims::getExpiration);
+        } catch (Exception e) {
+            log.warn("Failed to extract expiration from token: {}", e.getMessage());
+            return null;
+        }
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+        try {
+            final Claims claims = extractAllClaims(token);
+            return claimsResolver.apply(claims);
+        } catch (Exception e) {
+            log.warn("Failed to extract claim from token: {}", e.getMessage());
+            return null;
+        }
     }
 
     public String generateAccessToken(UserDetails userDetails, String userId) {
@@ -73,33 +118,41 @@ public class JwtService {
     }
 
     private String createToken(Map<String, Object> claims, String subject, long expiration) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + expiration);
+        try {
+            Date now = new Date();
+            Date expiryDate = new Date(now.getTime() + expiration);
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .setIssuer("Split PRO")
-                .setId(UUID.randomUUID().toString())
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
+            return Jwts.builder()
+                    .setClaims(claims)  // FIXED: use setClaims instead of claims
+                    .setSubject(subject)
+                    .setIssuedAt(now)
+                    .setExpiration(expiryDate)
+                    .setIssuer("Split PRO")
+                    .setId(UUID.randomUUID().toString())
+                    .signWith(getSigningKey())
+                    .compact();
+        } catch (Exception e) {
+            log.error("Failed to create JWT token: {}", e.getMessage());
+            throw new RuntimeException("Token generation failed", e);
+        }
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
             final String username = extractUsername(token);
-            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+            return (username != null && username.equals(userDetails.getUsername()) && !isTokenExpired(token));
         } catch (Exception e) {
+            log.warn("Token validation failed: {}", e.getMessage());
             return false;
         }
     }
 
     public boolean isTokenExpired(String token) {
         try {
-            return extractExpiration(token).before(new Date());
+            Date expiration = extractExpiration(token);
+            return expiration != null && expiration.before(new Date());
         } catch (Exception e) {
+            log.warn("Failed to check token expiration: {}", e.getMessage());
             return true;
         }
     }
@@ -108,6 +161,7 @@ public class JwtService {
         try {
             return "access".equals(extractTokenType(token));
         } catch (Exception e) {
+            log.warn("Failed to check if token is access token: {}", e.getMessage());
             return false;
         }
     }
@@ -116,17 +170,18 @@ public class JwtService {
         try {
             return "refresh".equals(extractTokenType(token));
         } catch (Exception e) {
+            log.warn("Failed to check if token is refresh token: {}", e.getMessage());
             return false;
         }
     }
 
     private Claims extractAllClaims(String token) {
-    return Jwts.parserBuilder()
-            .setSigningKey(getSigningKey())
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
-}
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
 
     public long getAccessTokenExpiry() {
         return accessTokenExpiry;
@@ -137,6 +192,11 @@ public class JwtService {
     }
 
     public String extractTokenVersion(String refreshToken) {
-        return extractClaim(refreshToken, claims -> claims.get("tokenVersion", String.class));
+        try {
+            return extractClaim(refreshToken, claims -> claims.get("tokenVersion", String.class));
+        } catch (Exception e) {
+            log.warn("Failed to extract token version: {}", e.getMessage());
+            return null;
+        }
     }
 }

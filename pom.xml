@@ -52,7 +52,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- JWT -->
+        <!-- JWT - KEEP ONLY ONE SET (Using 0.11.5 for compatibility) -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
