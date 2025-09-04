@@ -2,7 +2,7 @@
 
 A secure, modern expense splitting web application built with Java Spring Boot and vanilla JavaScript.
 
-<!-- // Added file -->
+
 
 ## Features
 
