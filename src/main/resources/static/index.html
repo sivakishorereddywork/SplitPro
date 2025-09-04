@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Split PRO - Split expenses among friends and groups securely">
+    <title>Split PRO - Smart Expense Splitting</title>
+    
+    <!-- Security Headers
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin"> -->
+    
+    <link rel="stylesheet" href="css/style.css">
+     <!-- <link rel="stylesheet" th:href="@{css/style.css}"> -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+</head>
+<body>
+    <!-- Fixed Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Left: Logo -->
+            <div class="nav-brand">
+                <h1>Split PRO</h1>
+            </div>
+            
+            <!-- Center: Navigation Links -->
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#" class="nav-link active" data-section="home">Home</a></li>
+                <li><a href="#" class="nav-link" data-section="friends">Friends</a></li>
+                <li><a href="#" class="nav-link" data-section="groups">Groups</a></li>
+                <li><a href="#" class="nav-link" data-section="history">History</a></li>
+            </ul>
+            
+            <!-- Right: User Profile -->
+            <div class="nav-user" id="navUser">
+                <!-- Logged out state -->
+                <div class="auth-buttons" id="authButtons">
+                    <button class="btn btn-outline" id="loginBtn">Sign In</button>
+                    <button class="btn btn-primary" id="signupBtn">Sign Up</button>
+                </div>
+                
+                <!-- Logged in state (hidden by default) -->
+                <div class="user-dropdown" id="userDropdown" style="display: none;">
+                    <button class="user-avatar" id="userAvatar">
+                        <span id="userInitials">JD</span>
+                    </button>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#" id="profileLink">Profile</a>
+                        <a href="#" id="settingsLink">Settings</a>
+                        <hr>
+                        <a href="#" id="logoutLink">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile menu toggle -->
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <!-- Hero Section (~50% viewport height) -->
+            <div class="hero">
+                <div class="hero-content">
+                    <h1>Split expenses effortlessly</h1>
+                    <p>Track shared expenses, settle debts, and keep your friendships money-worry-free.</p>
+                    
+                    <!-- Quick Actions Grid -->
+                    <div class="quick-actions">
+                        <div class="action-card">
+                            <h3>Quick Expense</h3>
+                            <p>Add a sample expense to get started</p>
+                            <button class="btn btn-primary" id="quickExpenseBtn">Add Expense</button>
+                        </div>
+                        
+                        <div class="action-card">
+                            <h3>Settle Up</h3>
+                            <p>View suggestions to balance accounts</p>
+                            <button class="btn btn-secondary" id="settleUpBtn">View Suggestions</button>
+                        </div>
+                        
+                        <div class="action-card">
+                            <h3>Balances</h3>
+                            <p>See who owes what at a glance</p>
+                            <button class="btn btn-secondary" id="balancesBtn">Show Balances</button>
+                        </div>
+                        
+                        <div class="action-card">
+                            <h3>Export Data</h3>
+                            <p>Download your expense history</p>
+                            <button class="btn btn-secondary" id="exportBtn">Export CSV</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Management Sections -->
+            <div class="management-section">
+                <div class="container">
+                    <h2>Management</h2>
+                    <div class="management-grid">
+                        <div class="management-card">
+                            <h3>People Management</h3>
+                            <p>Add and manage your friends list</p>
+                            <div class="card-actions">
+                                <button class="btn btn-outline" id="addFriendBtn">Add Friend</button>
+                                <button class="btn btn-outline" id="manageFriendsBtn">Manage Friends</button>
+                            </div>
+                        </div>
+                        
+                        <div class="management-card">
+                            <h3>Group Management</h3>
+                            <p>Create and organize expense groups</p>
+                            <div class="card-actions">
+                                <button class="btn btn-outline" id="createGroupBtn">Create Group</button>
+                                <button class="btn btn-outline" id="manageGroupsBtn">Manage Groups</button>
+                            </div>
+                        </div>
+                        
+                        <div class="management-card">
+                            <h3>Data Migration</h3>
+                            <p>Import and export your data</p>
+                            <div class="card-actions">
+                                <button class="btn btn-outline" id="importCsvBtn">Import CSV</button>
+                                <button class="btn btn-outline" id="exportCsvBtn">Export CSV</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Friends Section -->
+        <section id="friends" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Friends</h2>
+                    <button class="btn btn-primary" id="addNewFriendBtn">Add Friend</button>
+                </div>
+                <div class="friends-list" id="friendsList">
+                    <p class="empty-state">No friends added yet. Add your first friend to get started!</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Groups Section -->
+        <section id="groups" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Groups</h2>
+                    <button class="btn btn-primary" id="createNewGroupBtn">Create Group</button>
+                </div>
+                <div class="groups-list" id="groupsList">
+                    <p class="empty-state">No groups created yet. Create your first group to start splitting expenses!</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- History Section -->
+        <section id="history" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Transaction History</h2>
+                    <div class="history-filters">
+                        <select id="historyFilter">
+                            <option value="all">All Transactions</option>
+                            <option value="expenses">Expenses Only</option>
+                            <option value="settlements">Settlements Only</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="history-list" id="historyList">
+                    <p class="empty-state">No transactions yet. Add an expense to see your history!</p>
+                </div>
+                <div class="pagination" id="historyPagination" style="display: none;">
+                    <button class="btn btn-outline" id="loadMoreBtn">Load More</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Body Content (Testimonials & Features) -->
+    <div class="body-content">
+        <div class="container">
+            <section class="features">
+                <h2>Why Choose Split PRO?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Secure & Private</h3>
+                        <p>Bank-level security with encrypted data and secure authentication</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Lightning Fast</h3>
+                        <p>Optimized for speed with instant balance calculations</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Smart Analytics</h3>
+                        <p>Detailed insights and export options for your expenses</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="testimonials">
+                <h2>What Our Users Say</h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <p>"Split PRO made our group trip so much easier. No more awkward money conversations!"</p>
+                        <div class="testimonial-author">
+                            <strong>Sarah Chen</strong>
+                            <span>Travel Enthusiast</span>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p>"The CSV export feature is perfect for keeping track of roommate expenses."</p>
+                        <div class="testimonial-author">
+                            <strong>Mike Rodriguez</strong>
+                            <span>College Student</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Split PRO</h3>
+                    <p>Smart expense splitting for modern life</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook">📘</a>
+                        <a href="#" aria-label="Twitter">🐦</a>
+                        <a href="#" aria-label="Instagram">📷</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#" data-section="home">Home</a></li>
+                        <li><a href="#" data-section="friends">Friends</a></li>
+                        <li><a href="#" data-section="groups">Groups</a></li>
+                        <li><a href="#" data-section="history">History</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <p>Need help? Send us a message!</p>
+                    <button class="btn btn-outline btn-support" id="supportBtn">Contact Support</button>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Split PRO. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal for Authentication -->
+    <div class="modal" id="authModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="authModalTitle">Sign In</h2>
+                <button class="modal-close" id="closeAuthModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Auth forms will be injected here by JS -->
+                <div id="authForms"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Modal -->
+    <div class="modal" id="supportModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Contact Support</h2>
+                <button class="modal-close" id="closeSupportModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="supportForm">
+                    <div class="form-group">
+                        <label for="supportName">Name *</label>
+                        <input type="text" id="supportName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="supportPhone">Phone</label>
+                        <input type="tel" id="supportPhone">
+                    </div>
+                    <div class="form-group">
+                        <label for="supportEmail">Email *</label>
+                        <input type="email" id="supportEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="supportMessage">Message *</label>
+                        <textarea id="supportMessage" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/app.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://siva:Bujji.ms@123@splitpro.mtspwy5.mongodb.net/
+  
+  security:
+    require-ssl: false
+
+logging:
+  level:
+    com.splitpro: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    root: INFO
+
+splitpro:
+  security:
+    jwt:
+      secret: dev-secret-key-not-for-production
+    cors:
+      allowed-origins: http://localhost:8080,http://localhost:3000
